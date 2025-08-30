@@ -80,7 +80,8 @@
   --sidebar-ring: oklch(0.708 0 0);
 
   /* Custom Colors */
-  --primary: #36467F
+  --primary: #36467F;
+  --secondary: #DBE3FF
 }
 
 .dark {
