@@ -12,6 +12,10 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Eye, EyeOff } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { authApi } from "@/services/auth-service";
+import useAuthStore from "@/store/auth-store";
 
 const loginSchema = z.object({
   email: z.string(),
@@ -24,14 +28,23 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
+  const loginMutation = useMutation({
+    mutationFn: async (payload: LoginFormValues) => {
+      const loginResponse = await authApi.login(payload);
+      useAuthStore.setState({ token: loginResponse.access_token });
+    },
+  });
+
   const onSubmit = (values: LoginFormValues) => {
     console.log(values);
+    loginMutation.mutate(values);
   };
 
   const togglePasswordVisibility = () => {
