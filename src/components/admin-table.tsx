@@ -1,6 +1,17 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "./data-table";
 import { Trash2 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 type Product = {
   id: number;
@@ -30,14 +41,42 @@ const productColumns: ColumnDef<Product>[] = [
   {
     accessorKey: "id",
     header: "",
-    cell: ({ getValue }) => (
-      <button
-        className="cursor-pointer"
-        onClick={() => console.log(getValue())}
-      >
-        <Trash2 className="w-5 text-red-600 hover:text-red-800" />
-      </button>
-    ),
+    cell: ({ getValue }) => {
+      const id = getValue() as number;
+      const [open, setOpen] = useState(false);
+
+      const handleDelete = () => {
+        console.log(`Deleting product with ID: ${id}`);
+        setOpen(false);
+      };
+
+      return (
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button variant="ghost" size="icon" className="cursor-pointer">
+              <Trash2 className="w-5 text-red-600 hover:text-red-800" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Confirm Deletion</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete the product with ID {id}? This
+                action cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
+              <Button variant="destructive" onClick={handleDelete}>
+                Delete
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      );
+    },
   },
 ];
 
@@ -45,25 +84,25 @@ const productData: Product[] = [
   {
     id: 1,
     name: "Theresa Ayomide",
-    roles: "Dashboard, Subscrition, Users",
+    roles: "Dashboard, Subscription, Users",
     permissions: "4",
   },
   {
-    id: 1,
+    id: 2,
     name: "Theresa Ayomide",
-    roles: "Dashboard, Subscrition, Users",
+    roles: "Dashboard, Subscription, Users",
     permissions: "3",
   },
   {
-    id: 1,
+    id: 3,
     name: "Theresa Ayomide",
-    roles: "Dashboard, Subscrition, Users",
+    roles: "Dashboard, Subscription, Users",
     permissions: "4",
   },
   {
-    id: 1,
+    id: 4,
     name: "Theresa Ayomide",
-    roles: "Dashboard, Subscrition, Users",
+    roles: "Dashboard, Subscription, Users",
     permissions: "4",
   },
 ];
@@ -73,8 +112,7 @@ export function AdminTable() {
     <DataTable
       data={productData}
       columns={productColumns}
-      title="Payments"
-      description="User payments and payouts"
+      title="Admin"
       pageSize={10}
       showPagination={true}
     />
