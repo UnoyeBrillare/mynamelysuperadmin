@@ -6,9 +6,11 @@ import DashboardPage from "@/pages/dashbooard";
 import LoginPage from "@/pages/auth/login";
 import PaymentsPage from "@/pages/payments";
 import SettingsPage from "@/pages/settings";
-import UserDetails from "@/pages/user-details";
 import UsersPage from "@/pages/users";
 import { createBrowserRouter } from "react-router-dom";
+import AdminDetailsPage from "@/pages/admin-details";
+import UserDetailsPage from "@/pages/user-details";
+import AddAdminPage from "@/pages/add-amdin";
 
 export const router = createBrowserRouter([
   {
@@ -24,9 +26,11 @@ export const router = createBrowserRouter([
         children: [
           { element: <DashboardPage />, index: true },
           { element: <UsersPage />, path: "users" },
-          { element: <SettingsPage />, path: "settings" },
+          { element: <SettingsPage />, path: "admin-settings" },
           { element: <PaymentsPage />, path: "payments" },
-          { element: <UserDetails />, path: "users/:id" },
+          { element: <UserDetailsPage />, path: "users/:id" },
+          { element: <AddAdminPage />, path: "admin-settings/add" },
+          { element: <AdminDetailsPage />, path: "admin-settings/:id" },
         ],
       },
       {

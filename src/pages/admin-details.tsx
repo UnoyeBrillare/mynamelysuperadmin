@@ -1,7 +1,7 @@
 export default function AdminDetailsPage() {
   return (
     <div>
-      <p>Admin Details</p>
+      <div className="bg-white p-10"></div>
     </div>
   );
 }

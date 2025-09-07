@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type Product = {
   id: number;
@@ -108,6 +109,12 @@ const productData: Product[] = [
 ];
 
 export function AdminTable() {
+  const navigate = useNavigate();
+  const handleRowClick = (row: any) => {
+    console.log("ROW", row);
+    navigate(`/admin-settings/${row.id}`);
+  };
+
   return (
     <DataTable
       data={productData}
@@ -115,6 +122,7 @@ export function AdminTable() {
       title="Admin"
       pageSize={10}
       showPagination={true}
+      onRowClick={handleRowClick}
     />
   );
 }

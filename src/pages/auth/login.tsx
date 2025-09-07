@@ -11,16 +11,13 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { authApi } from "@/services/auth-service";
 import useAuthStore from "@/store/auth-store";
-
-const loginSchema = z.object({
-  email: z.string(),
-  password: z.string(),
-});
+import { toast } from "sonner";
+import { loginSchema } from "@/schemas/auth-schema";
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
@@ -40,17 +37,23 @@ export default function LoginPage() {
       const loginResponse = await authApi.login(payload);
       useAuthStore.setState({ token: loginResponse.access_token });
 
-      const userResponse = await authApi.getCurrentUser(payload.email);
-
-      console.log("LOGIN RESPONSE", loginResponse),
-        console.log("USER RESPONSE", userResponse);
-
-      return;
+      const userResponse = await authApi.getCurrentUser();
 
       return {
         token: loginResponse.access_token,
         user: userResponse.admin,
       };
+    },
+    onSuccess(data) {
+      toast.success("Login Successful", { description: "Welcome back!" });
+      useAuthStore.setState({
+        token: data.token,
+        user: data.user,
+        isAuthenticated: true,
+      });
+    },
+    onError: (error) => {
+      toast.error("Login Failed", { description: error.message });
     },
   });
 
@@ -122,7 +125,9 @@ export default function LoginPage() {
           <Button
             type="submit"
             className="w-full mt-6 bg-primary text-white hover:bg-primary h-12"
+            disabled={loginMutation.isPending}
           >
+            {loginMutation.isPending && <Loader2 className="animate-spin" />}
             Sign in
           </Button>
         </form>

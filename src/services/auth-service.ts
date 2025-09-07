@@ -40,9 +40,9 @@ export const authApi = {
   },
 
   // Get current user profile
-  getCurrentUser: async (email: string) => {
+  getCurrentUser: async () => {
     try {
-      const response = await apiClient.post(`/admin/profile`, { email });
+      const response = await apiClient.get(`/admin`);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {

@@ -38,7 +38,7 @@ const userData: UserData = {
   expiryDate: "09/08/2027",
 };
 
-export default function UserDetails() {
+export default function UserDetailsPage() {
   const navigate = useNavigate();
 
   const getInitials = (firstName: string, lastName: string) =>

@@ -9,7 +9,7 @@ import useAuthStore from "@/store/auth-store";
 const links = [
   { name: "Dashboard", icon: RiDashboardFill, href: "" },
   { name: "Users", icon: FaUser, href: "users" },
-  { name: "Admin Settings", icon: RiShieldUserFill, href: "settings" },
+  { name: "Admin Settings", icon: RiShieldUserFill, href: "admin-settings" },
   { name: "Payments", icon: PiCardsThreeFill, href: "payments" },
 ];
 

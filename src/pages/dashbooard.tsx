@@ -1,5 +1,5 @@
+import { SectionWrapper } from "@/components/section-wrapper";
 import UserSubscriptionChart from "@/components/user-subscription-chart";
-import type { ReactNode } from "react";
 
 const items1 = [
   { label: "All Users", value: 540, color: "#0A66C2" },
@@ -62,24 +62,6 @@ function ItemCard({
     <div style={{ background: color }} className="p-6 rounded-lg text-white">
       <p className="font-bold mb-5">{label}</p>
       <p className="font-bold text-xl">{value}</p>
-    </div>
-  );
-}
-
-function SectionWrapper({
-  children,
-  title,
-}: {
-  children: ReactNode | ReactNode[];
-  title?: string;
-}) {
-  return (
-    <div className="bg-white rounded-xl shadow-sm p-6">
-      <div className="flex mb-4 items-center gap-3">
-        <p className="font-bold text-md">{title}</p>
-        <div className="border-b flex-1" />
-      </div>
-      {children}
     </div>
   );
 }
