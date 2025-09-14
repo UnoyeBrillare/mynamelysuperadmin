@@ -20,6 +20,12 @@ interface DataTableProps<T> {
   className?: string;
   onRowClick?: (row: T) => void;
   rowClassName?: (row: T) => string;
+  currentPage?: number;
+  totalPages?: number;
+  totalCount?: number;
+  onPageChange?: (page: number) => void;
+  isLoading?: boolean;
+  error?: any;
 }
 
 export function DataTable<T>({
@@ -33,6 +39,12 @@ export function DataTable<T>({
   className = "",
   onRowClick,
   rowClassName,
+  currentPage = 1,
+  totalPages = 1,
+  totalCount = 0,
+  onPageChange,
+  isLoading,
+  error,
 }: DataTableProps<T>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
@@ -45,12 +57,13 @@ export function DataTable<T>({
     onSortingChange: setSorting,
     state: {
       sorting,
-    },
-    initialState: {
       pagination: {
+        pageIndex: currentPage - 1,
         pageSize,
       },
     },
+    manualPagination: true,
+    pageCount: totalPages,
   });
 
   return (
@@ -67,94 +80,110 @@ export function DataTable<T>({
             <p className="text-sm text-gray-600 mt-1">{description}</p>
           )}
           <p className="text-sm text-gray-600 mt-1">
-            Showing {table.getRowModel().rows.length} of {data.length} entries
+            Showing {data.length} of {totalCount} entries
           </p>
         </div>
       )}
 
+      {/* Loading State */}
+      {isLoading && (
+        <div className="px-6 py-12 text-center text-gray-500">
+          Loading users...
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && (
+        <div className="px-6 py-12 text-center text-red-500">
+          Error loading users: {error.message}
+        </div>
+      )}
+
       {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-primary">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th
-                    key={header.id}
-                    className={`px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider ${
-                      header.column.getCanSort()
-                        ? "cursor-pointer select-none"
-                        : ""
-                    }`}
-                    onClick={header.column.getToggleSortingHandler()}
-                  >
-                    <div className="flex items-center space-x-1">
-                      <span>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                      </span>
-                      {header.column.getCanSort() && (
-                        <span className="text-blue-200">
-                          {{
-                            asc: "↑",
-                            desc: "↓",
-                          }[header.column.getIsSorted() as string] ?? "↕"}
-                        </span>
-                      )}
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {table.getRowModel().rows.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={columns.length}
-                  className="px-6 py-12 text-center text-gray-500"
-                >
-                  No data available
-                </td>
-              </tr>
-            ) : (
-              table.getRowModel().rows.map((row, index) => (
-                <tr
-                  key={row.id}
-                  onClick={
-                    onRowClick ? () => onRowClick(row.original) : undefined
-                  }
-                  className={`
-                    hover:bg-gray-50 transition-colors duration-150 
-                    ${index % 2 === 0 ? "bg-white" : "bg-gray-25"}
-                    ${onRowClick ? "cursor-pointer hover:bg-blue-50" : ""}
-                    ${rowClassName ? rowClassName(row.original) : ""}
-                  `.trim()}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <td
-                      key={cell.id}
-                      className="px-6 py-4 whitespace-nowrap text-sm"
+      {!isLoading && !error && (
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-primary">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <th
+                      key={header.id}
+                      className={`px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider ${
+                        header.column.getCanSort()
+                          ? "cursor-pointer select-none"
+                          : ""
+                      }`}
+                      onClick={header.column.getToggleSortingHandler()}
                     >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </td>
+                      <div className="flex items-center space-x-1">
+                        <span>
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                        </span>
+                        {header.column.getCanSort() && (
+                          <span className="text-blue-200">
+                            {{
+                              asc: "↑",
+                              desc: "↓",
+                            }[header.column.getIsSorted() as string] ?? "↕"}
+                          </span>
+                        )}
+                      </div>
+                    </th>
                   ))}
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+              ))}
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {table.getRowModel().rows.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={columns.length}
+                    className="px-6 py-12 text-center text-gray-500"
+                  >
+                    No users found
+                  </td>
+                </tr>
+              ) : (
+                table.getRowModel().rows.map((row, index) => (
+                  <tr
+                    key={row.id}
+                    onClick={
+                      onRowClick ? () => onRowClick(row.original) : undefined
+                    }
+                    className={`
+                      hover:bg-gray-50 transition-colors duration-150 
+                      ${index % 2 === 0 ? "bg-white" : "bg-gray-25"}
+                      ${onRowClick ? "cursor-pointer hover:bg-blue-50" : ""}
+                      ${rowClassName ? rowClassName(row.original) : ""}
+                    `.trim()}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <td
+                        key={cell.id}
+                        className="px-6 py-4 whitespace-nowrap text-sm"
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {/* Pagination */}
-      {showPagination && (
+      {showPagination && !isLoading && !error && (
         <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center text-sm text-gray-700">
@@ -178,37 +207,36 @@ export function DataTable<T>({
             <div className="flex items-center space-x-2">
               <button
                 className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
-                onClick={() => table.setPageIndex(0)}
-                disabled={!table.getCanPreviousPage()}
+                onClick={() => onPageChange?.(1)}
+                disabled={currentPage === 1}
               >
                 First
               </button>
               <button
                 className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
+                onClick={() => onPageChange?.(currentPage - 1)}
+                disabled={currentPage === 1}
               >
                 Previous
               </button>
 
               <div className="flex items-center space-x-1">
                 <span className="text-sm text-gray-700">
-                  Page {table.getState().pagination.pageIndex + 1} of{" "}
-                  {table.getPageCount()}
+                  Page {currentPage} of {totalPages}
                 </span>
               </div>
 
               <button
                 className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
+                onClick={() => onPageChange?.(currentPage + 1)}
+                disabled={currentPage === totalPages}
               >
                 Next
               </button>
               <button
                 className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
-                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                disabled={!table.getCanNextPage()}
+                onClick={() => onPageChange?.(totalPages)}
+                disabled={currentPage === totalPages}
               >
                 Last
               </button>

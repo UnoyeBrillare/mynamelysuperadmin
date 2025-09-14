@@ -1,26 +1,48 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "./data-table";
 import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
 
-// 1. User Table Example
 type User = {
-  id: number;
+  _id: string;
   firstName: string;
   lastName: string;
   email: string;
+  phoneNumber?: string;
+  plan: string;
+  role: string;
   status: string;
-  dateSubscribed: string;
-  expiryDate: string;
-  period: string;
+  isActive: boolean;
+  isVerified: boolean;
+  isSubscriptionCancelled: boolean;
+  createdAt: string;
+  updatedAt: string;
+  subscriptionExpiration?: string;
+  card?: {
+    brand: string;
+    last4: string;
+    expMonth: number;
+    expYear: number;
+  };
 };
+
+interface UserTableProps {
+  data: User[];
+  isLoading: boolean;
+  error: any;
+  currentPage: number;
+  totalPages: number;
+  totalCount: number;
+  pageSize: number;
+  onPageChange: (page: number) => void;
+}
 
 const userColumns: ColumnDef<User>[] = [
   {
     accessorKey: "firstName",
-    header: "First Name",
+    header: "Name",
     cell: ({ row }) => {
-      const firstName = row.original.firstName;
-      const lastName = row.original.lastName;
+      const { firstName, lastName } = row.original;
       return (
         <span className="font-medium text-gray-900">{`${firstName} ${lastName}`}</span>
       );
@@ -29,19 +51,38 @@ const userColumns: ColumnDef<User>[] = [
   {
     accessorKey: "email",
     header: "Email",
-    cell: ({ getValue }) => <span className="">{getValue() as string}</span>,
+    cell: ({ getValue }) => (
+      <span className="text-gray-600">{getValue() as string}</span>
+    ),
   },
   {
-    accessorKey: "dateSubscribed",
+    accessorKey: "plan",
+    header: "Plan",
+    cell: ({ getValue }) => (
+      <span className="text-gray-600">{getValue() as string}</span>
+    ),
+  },
+  {
+    accessorKey: "createdAt",
     header: "Date Subscribed",
-    cell: ({ getValue }) => <span className="">{getValue() as string}</span>,
+    cell: ({ getValue }) => (
+      <span className="text-gray-600">
+        {format(new Date(getValue() as string), "MM/dd/yyyy")}
+      </span>
+    ),
   },
   {
-    accessorKey: "period",
-    header: "Period of Sub",
-    cell: ({ getValue }) => <span className="">{getValue() as string}</span>,
+    accessorKey: "subscriptionExpiration",
+    header: "Expiry Date",
+    cell: ({ getValue }) => {
+      const value = getValue() as string;
+      return (
+        <span className="text-gray-600">
+          {value ? format(new Date(value), "MM/dd/yyyy") : "N/A"}
+        </span>
+      );
+    },
   },
-
   {
     accessorKey: "status",
     header: "Status",
@@ -49,6 +90,7 @@ const userColumns: ColumnDef<User>[] = [
       const status = getValue() as string;
       const getStatusColor = (status: string) => {
         switch (status.toLowerCase()) {
+          case "joined":
           case "active":
             return "bg-green-100 text-green-800";
           case "inactive":
@@ -72,80 +114,39 @@ const userColumns: ColumnDef<User>[] = [
       );
     },
   },
-  {
-    accessorKey: "expiryDate",
-    header: "Expiry Date",
-    cell: ({ getValue }) => <span className="">{getValue() as string}</span>,
-  },
 ];
 
-const userData: User[] = [
-  {
-    id: 1,
-    firstName: "John",
-    lastName: "Doe",
-    email: "john@example.com",
-    status: "Active",
-    dateSubscribed: "12/08/2025",
-    period: "3 Months",
-    expiryDate: "12/11/2025",
-  },
-  {
-    id: 1,
-    firstName: "John",
-    lastName: "Doe",
-    email: "john@example.com",
-    status: "Active",
-    dateSubscribed: "12/08/2025",
-    period: "3 Months",
-    expiryDate: "12/11/2025",
-  },
-  {
-    id: 1,
-    firstName: "John",
-    lastName: "Doe",
-    email: "john@example.com",
-    status: "Expired",
-    dateSubscribed: "12/08/2025",
-    period: "3 Months",
-    expiryDate: "12/11/2025",
-  },
-  {
-    id: 1,
-    firstName: "John",
-    lastName: "Doe",
-    email: "john@example.com",
-    status: "Active",
-    dateSubscribed: "12/08/2025",
-    period: "3 Months",
-    expiryDate: "12/11/2025",
-  },
-  {
-    id: 1,
-    firstName: "John",
-    lastName: "Doe",
-    email: "john@example.com",
-    status: "Cancelled",
-    dateSubscribed: "12/08/2025",
-    period: "3 Months",
-    expiryDate: "12/11/2025",
-  },
-];
-
-export function UserTable() {
+export function UserTable({
+  data,
+  isLoading,
+  error,
+  currentPage,
+  totalPages,
+  totalCount,
+  pageSize,
+  onPageChange,
+}: UserTableProps) {
   const navigate = useNavigate();
-  const handleRowClick = (data: any) => {
-    navigate(`/users/${data.id}`);
+
+  const handleRowClick = (data: User) => {
+    navigate(`/users/${data._id}`);
   };
 
   return (
     <DataTable
-      data={userData}
+      data={data}
       columns={userColumns}
       title="Users"
       description="Manage your application users"
-      pageSize={5}
+      pageSize={pageSize}
       onRowClick={handleRowClick}
+      showPagination={true}
+      currentPage={currentPage}
+      totalPages={totalPages}
+      totalCount={totalCount}
+      onPageChange={onPageChange}
+      isLoading={isLoading}
+      error={error}
     />
   );
 }

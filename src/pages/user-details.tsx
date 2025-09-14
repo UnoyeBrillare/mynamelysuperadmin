@@ -1,6 +1,8 @@
 import { UserSubscriptionTable } from "@/components/user-subscription-table";
+import { userApi } from "@/services/user-service";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface UserData {
   firstName: string;
@@ -40,6 +42,12 @@ const userData: UserData = {
 
 export default function UserDetailsPage() {
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  const {} = useQuery({
+    queryKey: ["user-details"],
+    queryFn: () => userApi.getOneUser(id!),
+  });
 
   const getInitials = (firstName: string, lastName: string) =>
     `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
