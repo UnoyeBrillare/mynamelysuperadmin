@@ -75,10 +75,26 @@ export default function DashboardPage() {
   ];
 
   const subscriptionStats = [
-    { label: "Free Plan", value: 540, color: "#0A66C2" },
-    { label: "Premium Plan", value: 540, color: "#4A8CFF" },
-    { label: "Corporate Users", value: 540, color: "#5055B0" },
-    { label: "Enterprise Plan", value: 540, color: "#00A4EF" },
+    {
+      label: "Free Plan",
+      value: subscriptionStatsResponse?.data.free || 0,
+      color: "#0A66C2",
+    },
+    {
+      label: "Premium Plan",
+      value: subscriptionStatsResponse?.data.premium || 0,
+      color: "#4A8CFF",
+    },
+    {
+      label: "Corporate Users",
+      value: subscriptionStatsResponse?.data.corporate || 0,
+      color: "#5055B0",
+    },
+    {
+      label: "Enterprise Plan",
+      value: subscriptionStatsResponse?.data.enterprise || 0,
+      color: "#00A4EF",
+    },
   ];
 
   return (
@@ -95,7 +111,7 @@ export default function DashboardPage() {
         ) : error ? (
           <p className="text-red-500">Error loading user stats</p>
         ) : (
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {userStats.map((item, index) => (
               <ItemCard
                 label={item.label}
@@ -113,7 +129,7 @@ export default function DashboardPage() {
         title="User Analytics by Subscriptions"
         rightElement={<CustomDateRange />}
       >
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {subscriptionStats.map((item, index) => (
             <ItemCard
               label={item.label}
@@ -124,7 +140,7 @@ export default function DashboardPage() {
           ))}
         </div>
         <div className="w-[350px] h-[350px]">
-          <UserSubscriptionChart />
+          <UserSubscriptionChart data={subscriptionStatsResponse?.data} />
         </div>
       </SectionWrapper>
     </div>

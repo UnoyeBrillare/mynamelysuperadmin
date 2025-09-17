@@ -21,7 +21,7 @@ type Product = {
   permissions: string;
 };
 
-const productColumns: ColumnDef<Product>[] = [
+const adminColumns: ColumnDef<Product>[] = [
   {
     accessorKey: "name",
     header: "Product Name",
@@ -108,7 +108,27 @@ const productData: Product[] = [
   },
 ];
 
-export function AdminTable() {
+interface AdminTableProps {
+  data: any;
+  isLoading: boolean;
+  error: any;
+  currentPage: number;
+  totalPages: number;
+  totalCount: number;
+  pageSize: number;
+  onPageChange: (page: number) => void;
+}
+
+export function AdminTable({
+  data,
+  isLoading,
+  error,
+  currentPage,
+  totalPages,
+  totalCount,
+  pageSize,
+  onPageChange,
+}: AdminTableProps) {
   const navigate = useNavigate();
   const handleRowClick = (row: any) => {
     console.log("ROW", row);
@@ -117,12 +137,19 @@ export function AdminTable() {
 
   return (
     <DataTable
-      data={productData}
-      columns={productColumns}
-      title="Admin"
-      pageSize={10}
-      showPagination={true}
+      data={data}
+      columns={adminColumns}
+      title="Users"
+      description="Manage your application users"
+      pageSize={pageSize}
       onRowClick={handleRowClick}
+      showPagination={true}
+      currentPage={currentPage}
+      totalPages={totalPages}
+      totalCount={totalCount}
+      onPageChange={onPageChange}
+      isLoading={isLoading}
+      error={error}
     />
   );
 }

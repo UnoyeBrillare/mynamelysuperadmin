@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import type { JSX } from "react";
+import useAuthStore from "@/store/auth-store";
 
 // Define page-specific header configurations
 interface HeaderConfig {
@@ -36,6 +37,7 @@ const headerConfig: Record<string, HeaderConfig> = {
 export default function Header() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { user } = useAuthStore();
 
   // Get the current page key from pathname
   const getPageKey = (pathname: string): string => {
@@ -59,7 +61,8 @@ export default function Header() {
           className="w-10 h-10 rounded-full bg-primary flex justify-center items-center text-white font-bold"
           aria-label="User profile"
         >
-          SA
+          {user?.firstName?.charAt(0)}
+          {user?.lastName?.charAt(0)}
         </div>
       </div>
     </header>

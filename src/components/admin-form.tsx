@@ -35,9 +35,10 @@ export type Permission =
 
 // Updated schema to match the payload structure
 const adminSchema = z.object({
-  fullName: z.string().min(2, "Full name must be at least 2 characters"),
+  firstName: z.string().min(2, "First name must be at least 2 characters"),
+  lastName: z.string().min(2, "Last name must be at least 2 characters"),
   email: z.email("Please enter a valid email address"),
-  role: z.enum(["USER_ADMIN", "SUPER_ADMIN", "MODERATOR"] as const),
+  role: z.enum(["USER ADMIN", "SUPER ADMIN", "MODERATOR"] as const),
   permissions: z
     .array(z.string())
     .min(1, "Please select at least one permission"),
@@ -86,15 +87,15 @@ export default function AdminForm({
   const form = useForm<AdminFormData>({
     resolver: zodResolver(adminSchema),
     defaultValues: {
-      fullName: initialData?.fullName || "",
+      firstName: initialData?.firstName || "",
+      lastName: initialData?.lastName || "",
       email: initialData?.email || "",
-      role: initialData?.role || "USER_ADMIN",
+      role: initialData?.role || "USER ADMIN",
       permissions: initialData?.permissions || [],
     },
   });
 
   const handleSubmit = (data: AdminFormData) => {
-    console.log(data);
     onSubmit?.(data);
   };
 
@@ -133,12 +134,26 @@ export default function AdminForm({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-baseline max-w-4xl">
               <FormField
                 control={form.control}
-                name="fullName"
+                name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name *</FormLabel>
+                    <FormLabel>First name *</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter full name" {...field} />
+                      <Input placeholder="Enter first name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Last name *</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter last name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -185,8 +200,8 @@ export default function AdminForm({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="USER_ADMIN">User Admin</SelectItem>
-                        <SelectItem value="SUPER_ADMIN">Super Admin</SelectItem>
+                        <SelectItem value="USER ADMIN">User Admin</SelectItem>
+                        <SelectItem value="SUPER ADMIN">Super Admin</SelectItem>
                         <SelectItem value="MODERATOR">Moderator</SelectItem>
                       </SelectContent>
                     </Select>

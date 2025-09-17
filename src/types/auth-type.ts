@@ -3,6 +3,11 @@ export interface AdminUser {
   firstName?: string;
   lastName?: string;
   email?: string;
+  role: string;
+  permissions: any;
+  isSuperAdmin: boolean;
+  isDeleted: boolean;
+  isPasswordChanged: boolean;
 }
 
 export interface AuthState {
