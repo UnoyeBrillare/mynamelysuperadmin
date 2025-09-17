@@ -81,33 +81,6 @@ const adminColumns: ColumnDef<Product>[] = [
   },
 ];
 
-const productData: Product[] = [
-  {
-    id: 1,
-    name: "Theresa Ayomide",
-    roles: "Dashboard, Subscription, Users",
-    permissions: "4",
-  },
-  {
-    id: 2,
-    name: "Theresa Ayomide",
-    roles: "Dashboard, Subscription, Users",
-    permissions: "3",
-  },
-  {
-    id: 3,
-    name: "Theresa Ayomide",
-    roles: "Dashboard, Subscription, Users",
-    permissions: "4",
-  },
-  {
-    id: 4,
-    name: "Theresa Ayomide",
-    roles: "Dashboard, Subscription, Users",
-    permissions: "4",
-  },
-];
-
 interface AdminTableProps {
   data: any;
   isLoading: boolean;
@@ -139,8 +112,8 @@ export function AdminTable({
     <DataTable
       data={data}
       columns={adminColumns}
-      title="Users"
-      description="Manage your application users"
+      title="Admin"
+      description="Manage admin roles and permissions"
       pageSize={pageSize}
       onRowClick={handleRowClick}
       showPagination={true}

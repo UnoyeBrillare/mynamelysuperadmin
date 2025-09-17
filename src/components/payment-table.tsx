@@ -11,7 +11,7 @@ type Product = {
   plan: string;
 };
 
-const productColumns: ColumnDef<Product>[] = [
+const paymentColumns: ColumnDef<Product>[] = [
   {
     accessorKey: "name",
     header: "Product Name",
@@ -56,63 +56,41 @@ const productColumns: ColumnDef<Product>[] = [
   },
 ];
 
-const productData: Product[] = [
-  {
-    id: 1,
-    name: "Theresa Ayomide",
-    amount: 12.99,
-    currency: "USD",
-    period: "3 Months",
-    date: "10/08/2025",
-    plan: "Premium",
-  },
-  {
-    id: 2,
-    name: "Theresa Ayomide",
-    amount: 119,
-    currency: "USD",
-    period: "3 Months",
-    date: "10/08/2025",
-    plan: "Corporate",
-  },
-  {
-    id: 3,
-    name: "Theresa Ayomide",
-    amount: 32,
-    currency: "USD",
-    period: "1 Months",
-    date: "10/08/2025",
-    plan: "Premium",
-  },
-  {
-    id: 4,
-    name: "Theresa Ayomide",
-    amount: 45,
-    currency: "USD",
-    period: "3 Months",
-    date: "10/08/2025",
-    plan: "Corporate",
-  },
-  {
-    id: 5,
-    name: "Theresa Ayomide",
-    amount: 319,
-    currency: "USD",
-    period: "1 Year",
-    date: "10/08/2025",
-    plan: "Enterprise",
-  },
-];
+interface PaymentTableProps {
+  data: any;
+  isLoading: boolean;
+  error: any;
+  currentPage: number;
+  totalPages: number;
+  totalCount: number;
+  pageSize: number;
+  onPageChange: (page: number) => void;
+}
 
-export function PaymentTable() {
+export function PaymentTable({
+  data,
+  isLoading,
+  error,
+  currentPage,
+  totalPages,
+  totalCount,
+  pageSize,
+  onPageChange,
+}: PaymentTableProps) {
   return (
     <DataTable
-      data={productData}
-      columns={productColumns}
+      data={data}
+      columns={paymentColumns}
       title="Payments"
       description="User payments and payouts"
-      pageSize={10}
+      pageSize={pageSize}
       showPagination={true}
+      currentPage={currentPage}
+      totalPages={totalPages}
+      totalCount={totalCount}
+      onPageChange={onPageChange}
+      isLoading={isLoading}
+      error={error}
     />
   );
 }

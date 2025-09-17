@@ -6,6 +6,7 @@ interface GetUsersParams {
   limit: number;
   startDate?: string;
   endDate?: string;
+  plan?: string;
 }
 
 export const userApi = {

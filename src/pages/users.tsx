@@ -38,24 +38,21 @@ const tabs = [
 
 export default function UsersPage() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeTab, setActiveTab] = useState("free");
   const pageSize = 10;
 
-  // Fetch users with pagination
+  // Fetch users with pagination and plan filter
   const { data, isLoading, error } = useQuery<{
     data: { users: User[]; totalPages: number | null; count: number };
   }>({
-    queryKey: ["users", currentPage],
-    queryFn: () => userApi.getUsers({ page: currentPage, limit: pageSize }),
+    queryKey: ["users", currentPage, activeTab],
+    queryFn: () =>
+      userApi.getUsers({
+        page: currentPage,
+        limit: pageSize,
+        plan: tabs.find((tab) => tab.key === activeTab)?.value,
+      }),
   });
-
-  // Filter users by plan
-  const filterUsersByPlan = (plan: string) => {
-    return (
-      data?.data.users.filter(
-        (user) => user.plan.toLowerCase() === plan.toLowerCase()
-      ) || []
-    );
-  };
 
   return (
     <div className="container mx-auto py-6">
@@ -66,7 +63,15 @@ export default function UsersPage() {
         </p>
       </div>
 
-      <Tabs defaultValue="free" className="w-full">
+      <Tabs
+        defaultValue="free"
+        value={activeTab}
+        onValueChange={(value) => {
+          setActiveTab(value);
+          setCurrentPage(1); // Reset to first page when changing tabs
+        }}
+        className="w-full"
+      >
         <TabsList className="py-6 px-2">
           {tabs.map((tab) => (
             <TabsTrigger
@@ -90,7 +95,7 @@ export default function UsersPage() {
         {tabs.map((tab) => (
           <TabsContent key={tab.key} value={tab.key} className="mt-6">
             <UserTable
-              data={filterUsersByPlan(tab.value)}
+              data={data?.data.users || []}
               isLoading={isLoading}
               error={error}
               currentPage={currentPage}
