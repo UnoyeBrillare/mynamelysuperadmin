@@ -23,7 +23,7 @@ export const userApi = {
 
   getOneUser: async (userId: string) => {
     try {
-      const { data } = await apiClient.get(`/admin/all-users/${userId}`);
+      const { data } = await apiClient.get(`/users/public/${userId}`);
       return data;
     } catch (error) {
       throw error;
@@ -40,10 +40,28 @@ export const userApi = {
       throw error;
     }
   },
+
   getSubscriptionStats: async (startDate: string, endDate: string) => {
     try {
       const { data } = await apiClient.get(`/admin/stats`, {
         params: { startDate, endDate },
+      });
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  getUserActivities: async (params: {
+    page?: number;
+    limit?: number;
+    startDate?: string;
+    endDate?: string;
+    userId: string;
+  }) => {
+    try {
+      const { data } = await apiClient.get(`/admin/activities`, {
+        params,
       });
       return data;
     } catch (error) {

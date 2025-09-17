@@ -1,8 +1,10 @@
 import { UserSubscriptionTable } from "@/components/user-subscription-table";
+import { UserActivitiesTable } from "@/components/user-activities-table";
 import { userApi } from "@/services/user-service";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useState } from "react";
 
 interface UserData {
   firstName: string;
@@ -43,10 +45,17 @@ const userData: UserData = {
 export default function UserDetailsPage() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const [activityPage, setActivityPage] = useState(1);
 
-  const {} = useQuery({
-    queryKey: ["user-details"],
+  const { data: userDetailsResponse } = useQuery({
+    queryKey: ["user-details", id],
     queryFn: () => userApi.getOneUser(id!),
+  });
+
+  const { data: userActivitiesResponse } = useQuery({
+    queryKey: ["user-activities", id, activityPage],
+    queryFn: () =>
+      userApi.getUserActivities({ userId: id!, page: activityPage }),
   });
 
   const getInitials = (firstName: string, lastName: string) =>
@@ -65,17 +74,17 @@ export default function UserDetailsPage() {
   );
 
   const profileFields = [
-    { label: "First name", value: userData.firstName },
-    { label: "Last name", value: userData.lastName },
-    { label: "Preferred Name", value: userData.preferredName },
+    { label: "First name", value: userDetailsResponse?.data.firstName },
+    { label: "Last name", value: userDetailsResponse?.data.lastName },
+    { label: "Preferred Name", value: "N/A" },
     {
       label: "Email address",
-      value: userData.email,
+      value: userDetailsResponse?.data.email,
       className: "text-blue-600",
     },
     {
       label: "Name background",
-      value: userData.nameBackground,
+      value: "N/A",
       wrapperClass: "w-[650px]",
     },
   ];
@@ -165,6 +174,16 @@ export default function UserDetailsPage() {
 
       {/* Subscription History Table */}
       <UserSubscriptionTable />
+
+      {/* User Activities Table */}
+      {userActivitiesResponse?.admin?.audits && (
+        <UserActivitiesTable
+          audits={userActivitiesResponse.admin.audits}
+          pageSize={5}
+          // onRowClick is optional; add navigation logic if needed
+          onRowClick={(audit) => console.log("Activity clicked:", audit._id)}
+        />
+      )}
     </div>
   );
 }
