@@ -78,9 +78,9 @@ export const userApi = {
     }
   },
 
-  deleteUser: async (id?: string) => {
+  deleteUser: async (id: string) => {
     try {
-      const { data } = await apiClient.get(`/users/delete/${id}`);
+      const { data } = await apiClient.get(`/admin/users/delete/one/${id}`);
       return data;
     } catch (error) {
       throw error;
