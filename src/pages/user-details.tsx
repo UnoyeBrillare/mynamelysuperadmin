@@ -4,7 +4,6 @@ import { userApi } from "@/services/user-service";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useState } from "react";
 
 interface UserData {
   firstName: string;
@@ -45,17 +44,10 @@ const userData: UserData = {
 export default function UserDetailsPage() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [activityPage, setActivityPage] = useState(1);
 
   const { data: userDetailsResponse } = useQuery({
     queryKey: ["user-details", id],
     queryFn: () => userApi.getOneUser(id!),
-  });
-
-  const { data: userActivitiesResponse } = useQuery({
-    queryKey: ["user-activities", id, activityPage],
-    queryFn: () =>
-      userApi.getUserActivities({ userId: id!, page: activityPage }),
   });
 
   const getInitials = (firstName: string, lastName: string) =>
@@ -87,18 +79,6 @@ export default function UserDetailsPage() {
       value: "N/A",
       wrapperClass: "w-[650px]",
     },
-  ];
-
-  const subscriptionFields = [
-    { label: "Latest Subscription", value: userData.latestSubscription },
-    { label: "Subscription Period", value: userData.subscriptionPeriod },
-    {
-      label: "Subscription Status",
-      value: userData.subscriptionStatus,
-      className:
-        "inline-flex px-3 py-1 text-sm font-semibold rounded-full bg-green-100 text-green-800",
-    },
-    { label: "Expiry Date", value: userData.expiryDate },
   ];
 
   const SectionHeader = ({
@@ -155,35 +135,8 @@ export default function UserDetailsPage() {
         </div>
       </div>
 
-      {/* Subscription Details Section */}
-      <div className="rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
-        <SectionHeader
-          title="Subscription Details"
-          rightContent={
-            <span className="rounded-lg bg-white px-4 py-2 font-semibold text-blue-800">
-              {userData.subscriptionPlan}
-            </span>
-          }
-        />
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {subscriptionFields.map((field, index) => (
-            <Field key={index} {...field} />
-          ))}
-        </div>
-      </div>
-
-      {/* Subscription History Table */}
       <UserSubscriptionTable />
-
-      {/* User Activities Table */}
-      {userActivitiesResponse?.admin?.audits && (
-        <UserActivitiesTable
-          audits={userActivitiesResponse.admin.audits}
-          pageSize={5}
-          // onRowClick is optional; add navigation logic if needed
-          onRowClick={(audit) => console.log("Activity clicked:", audit._id)}
-        />
-      )}
+      <UserActivitiesTable />
     </div>
   );
 }

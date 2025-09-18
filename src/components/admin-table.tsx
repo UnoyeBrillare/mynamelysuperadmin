@@ -13,24 +13,22 @@ import {
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import type { AdminUser } from "@/types/auth-type";
 
-type Product = {
-  id: number;
-  name: string;
-  roles: string;
-  permissions: string;
-};
-
-const adminColumns: ColumnDef<Product>[] = [
+const adminColumns: ColumnDef<AdminUser>[] = [
   {
-    accessorKey: "name",
-    header: "Product Name",
-    cell: ({ getValue }) => (
-      <span className="font-medium text-gray-900">{getValue() as string}</span>
+    accessorKey: "firstName",
+    header: "User",
+    cell: (row) => (
+      <div>
+        <span className="font-medium text-gray-900">
+          {row.getValue() as string} {row.row.original.lastName as string}
+        </span>
+      </div>
     ),
   },
   {
-    accessorKey: "roles",
+    accessorKey: "role",
     header: "Roles",
     cell: ({ getValue }) => <span className="">{getValue() as string}</span>,
   },

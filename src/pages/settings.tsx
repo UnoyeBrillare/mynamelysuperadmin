@@ -13,7 +13,9 @@ export default function SettingsPage() {
     isLoading,
     error,
   } = useQuery<{
-    data: { admins: AdminUser[]; totalPages: number | null; count: number };
+    data: AdminUser[];
+    totalPages: number | null;
+    count: number;
   }>({
     queryKey: ["admins", currentPage],
     queryFn: () => adminApi.getAdmins({ page: currentPage, limit: pageSize }),
@@ -23,11 +25,11 @@ export default function SettingsPage() {
     <div>
       <AdminTable
         isLoading={isLoading}
-        data={adminResponse?.data?.admins || []}
+        data={adminResponse?.data || []}
         error={error}
         currentPage={currentPage}
-        totalPages={adminResponse?.data?.totalPages || 1}
-        totalCount={adminResponse?.data?.count || 0}
+        totalPages={adminResponse?.totalPages || 1}
+        totalCount={adminResponse?.count || 0}
         pageSize={pageSize}
         onPageChange={setCurrentPage}
       />

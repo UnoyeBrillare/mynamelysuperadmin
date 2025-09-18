@@ -1,6 +1,10 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "./data-table";
 import { format } from "date-fns";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useParams } from "react-router-dom";
+import { userApi } from "@/services/user-service";
 
 interface Audit {
   _id: string;
@@ -10,17 +14,16 @@ interface Audit {
   createdAt: string;
 }
 
-interface UserActivitiesTableProps {
-  audits: Audit[];
-  pageSize?: number;
-  onRowClick?: (data: Audit) => void;
-}
+export function UserActivitiesTable() {
+  const { id } = useParams();
+  const [currentPage, setCurrentPage] = useState(1);
 
-export function UserActivitiesTable({
-  audits,
-  pageSize = 5,
-  onRowClick,
-}: UserActivitiesTableProps) {
+  const { data: userActivitiesResponse } = useQuery({
+    queryKey: ["user-activities", id, currentPage],
+    queryFn: () =>
+      userApi.getUserActivities({ userId: id!, page: currentPage }),
+  });
+
   const columns: ColumnDef<Audit>[] = [
     {
       accessorKey: "action",
@@ -54,12 +57,12 @@ export function UserActivitiesTable({
 
   return (
     <DataTable
-      data={audits}
+      data={userActivitiesResponse?.admin?.audits || []}
       columns={columns}
       title="Activity History"
       description="View user activity history"
-      pageSize={pageSize}
-      onRowClick={onRowClick}
+      pageSize={5}
+      onPageChange={setCurrentPage}
     />
   );
 }

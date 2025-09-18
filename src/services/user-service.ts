@@ -23,7 +23,16 @@ export const userApi = {
 
   getOneUser: async (userId: string) => {
     try {
-      const { data } = await apiClient.get(`/users/public/${userId}`);
+      const { data } = await apiClient.get(`/users/one/${userId}`);
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  getUserSubscriptions: async (userId: string) => {
+    try {
+      const { data } = await apiClient.get(`/admin/payment/one/${userId}`);
       return data;
     } catch (error) {
       throw error;
