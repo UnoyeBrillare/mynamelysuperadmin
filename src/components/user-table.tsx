@@ -44,7 +44,7 @@ const userColumns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       const { firstName, lastName } = row.original;
       return (
-        <span className="font-medium text-gray-900">{`${firstName} ${lastName}`}</span>
+        <span className="font-semibold text-gray-900">{`${firstName} ${lastName}`}</span>
       );
     },
   },
@@ -52,33 +52,44 @@ const userColumns: ColumnDef<User>[] = [
     accessorKey: "email",
     header: "Email",
     cell: ({ getValue }) => (
-      <span className="text-gray-600">{getValue() as string}</span>
+      <span className="text-gray-900 font-semibold">
+        {getValue() as string}
+      </span>
     ),
   },
   {
     accessorKey: "plan",
     header: "Plan",
     cell: ({ getValue }) => (
-      <span className="text-gray-600">{getValue() as string}</span>
+      <span className="text-gray-900 font-semibold">
+        {getValue() as string}
+      </span>
     ),
   },
   {
     accessorKey: "createdAt",
-    header: "Date Subscribed",
+    header: "Date Joined",
     cell: ({ getValue }) => (
-      <span className="text-gray-600">
+      <span className="text-gray-900 font-semibold">
         {format(new Date(getValue() as string), "MM/dd/yyyy")}
       </span>
     ),
   },
   {
     accessorKey: "subscriptionExpiration",
-    header: "Expiry Date",
+    header: "Sub Status",
     cell: ({ getValue }) => {
-      const value = getValue() as string;
+      const isExpired = getValue() as boolean;
+
       return (
-        <span className="text-gray-600">
-          {value ? format(new Date(value), "MM/dd/yyyy") : "N/A"}
+        <span
+          className={`inline-flex px-2 py-1 text-xs font-bold rounded-full ${
+            isExpired
+              ? "bg-yellow-100 text-yellow-800"
+              : "bg-green-100 text-green-800"
+          }`}
+        >
+          {isExpired ? "Expired" : "Active"}
         </span>
       );
     },
@@ -105,7 +116,7 @@ const userColumns: ColumnDef<User>[] = [
       };
       return (
         <span
-          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
+          className={`inline-flex px-2 py-1 text-xs font-bold rounded-full capitalize ${getStatusColor(
             status
           )}`}
         >

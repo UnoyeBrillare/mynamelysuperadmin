@@ -21,7 +21,7 @@ const adminColumns: ColumnDef<AdminUser>[] = [
     header: "User",
     cell: (row) => (
       <div>
-        <span className="font-medium text-gray-900">
+        <span className="font-semibold text-gray-900">
           {row.getValue() as string} {row.row.original.lastName as string}
         </span>
       </div>
@@ -30,12 +30,11 @@ const adminColumns: ColumnDef<AdminUser>[] = [
   {
     accessorKey: "role",
     header: "Roles",
-    cell: ({ getValue }) => <span className="">{getValue() as string}</span>,
-  },
-  {
-    accessorKey: "permissions",
-    header: "Permissions",
-    cell: ({ getValue }) => <span className="">{getValue() as string}</span>,
+    cell: ({ getValue }) => (
+      <span className="font-semibold text-gray-900">
+        {getValue() as string}
+      </span>
+    ),
   },
   {
     accessorKey: "id",

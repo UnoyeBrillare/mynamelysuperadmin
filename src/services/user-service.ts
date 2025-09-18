@@ -77,4 +77,13 @@ export const userApi = {
       throw error;
     }
   },
+
+  deleteUser: async (id?: string) => {
+    try {
+      const { data } = await apiClient.get(`/users/delete/${id}`);
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

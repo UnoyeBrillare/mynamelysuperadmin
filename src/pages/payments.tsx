@@ -14,7 +14,7 @@ export default function PaymentsPage() {
   } = useQuery<{
     data: { admins: any[]; totalPages: number | null; count: number };
   }>({
-    queryKey: ["admins", currentPage],
+    queryKey: ["payments", currentPage],
     queryFn: () =>
       paymentApi.getPayments({ page: currentPage, limit: pageSize }),
   });
@@ -23,7 +23,7 @@ export default function PaymentsPage() {
     <div>
       <PaymentTable
         isLoading={isLoading}
-        data={adminResponse?.data?.admins || []}
+        data={adminResponse?.data || []}
         error={error}
         currentPage={currentPage}
         totalPages={adminResponse?.data?.totalPages || 1}

@@ -17,6 +17,7 @@ interface Audit {
 export function UserActivitiesTable() {
   const { id } = useParams();
   const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
   const { data: userActivitiesResponse } = useQuery({
     queryKey: ["user-activities", id, currentPage],
@@ -29,7 +30,7 @@ export function UserActivitiesTable() {
       accessorKey: "action",
       header: "Action",
       cell: ({ getValue }) => (
-        <span className="font-medium text-gray-900">
+        <span className="font-semibold text-gray-900">
           {getValue() as string}
         </span>
       ),
@@ -37,18 +38,22 @@ export function UserActivitiesTable() {
     {
       accessorKey: "module",
       header: "Module",
-      cell: ({ getValue }) => <span>{getValue() as string}</span>,
+      cell: ({ getValue }) => (
+        <span className="font-semibold">{getValue() as string}</span>
+      ),
     },
     {
       accessorKey: "description",
       header: "Description",
-      cell: ({ getValue }) => <span>{getValue() as string}</span>,
+      cell: ({ getValue }) => (
+        <span className="font-semibold">{getValue() as string}</span>
+      ),
     },
     {
       accessorKey: "createdAt",
       header: "Date",
       cell: ({ getValue }) => (
-        <span>
+        <span className="font-semibold">
           {format(new Date(getValue() as string), "dd/MM/yyyy HH:mm")}
         </span>
       ),
@@ -61,8 +66,11 @@ export function UserActivitiesTable() {
       columns={columns}
       title="Activity History"
       description="View user activity history"
-      pageSize={5}
+      pageSize={pageSize}
       onPageChange={setCurrentPage}
+      currentPage={currentPage}
+      totalPages={userActivitiesResponse?.admin.totalPages || 1}
+      totalCount={userActivitiesResponse?.admin.count || 0}
     />
   );
 }

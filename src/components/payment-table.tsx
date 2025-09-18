@@ -1,5 +1,6 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "./data-table";
+import { formatCurrency, formatDate } from "@/utils/string";
 
 type Product = {
   id: number;
@@ -13,45 +14,79 @@ type Product = {
 
 const paymentColumns: ColumnDef<Product>[] = [
   {
-    accessorKey: "name",
-    header: "Product Name",
+    accessorKey: "description",
+    header: "Description",
     cell: ({ getValue }) => (
-      <span className="font-medium text-gray-900">{getValue() as string}</span>
+      <span className="font-semibold text-gray-900">
+        {(getValue() as string) || "--"}
+      </span>
     ),
   },
   {
     accessorKey: "plan",
     header: "Subscription Plan",
-    cell: ({ getValue }) => <span className="">{getValue() as string}</span>,
+    cell: ({ getValue }) => (
+      <span className="font-semibold">{getValue() as string}</span>
+    ),
   },
   {
     accessorKey: "currency",
     header: "Currency",
-    cell: ({ getValue }) => <span className="">{getValue() as string}</span>,
-  },
-
-  {
-    accessorKey: "amount",
-    header: "Price",
     cell: ({ getValue }) => (
-      <span className="text-green-600 font-semibold">
-        ${(getValue() as number).toFixed(2)}
-      </span>
+      <span className="uppercase font-semibold">{getValue() as string}</span>
     ),
   },
 
   {
-    accessorKey: "period",
-    header: "Sub Period",
-    cell: ({ getValue }) => {
-      return <span className={"text-gray-700"}>{getValue() as string}</span>;
-    },
+    accessorKey: "amountTotal",
+    header: "Price",
+    cell: ({ getValue }) => (
+      <span className="text-gray-899 font-semibold">
+        {formatCurrency(getValue() as number)}
+      </span>
+    ),
   },
   {
-    accessorKey: "date",
+    accessorKey: "paymentStatus",
+    header: "Status",
+    cell: ({ getValue }) => {
+      const status = getValue() as string;
+      const getStatusColor = (status: string) => {
+        switch (status.toLowerCase()) {
+          case "paid":
+          case "active":
+            return "bg-green-100 text-green-800";
+          case "inactive":
+          case "cancelled":
+            return "bg-red-100 text-red-800";
+          case "pending":
+          case "expired":
+            return "bg-yellow-100 text-yellow-800";
+          default:
+            return "bg-gray-100 text-gray-800";
+        }
+      };
+      return (
+        <span
+          className={`inline-flex px-2 py-1 text-xs font-bold rounded-full capitalize ${getStatusColor(
+            status
+          )}`}
+        >
+          {status}
+        </span>
+      );
+    },
+  },
+
+  {
+    accessorKey: "createdAt",
     header: "Subscription Date",
     cell: ({ getValue }) => {
-      return <span className={"text-gray-700"}>{getValue() as string}</span>;
+      return (
+        <span className={"text-gray-900 font-semibold"}>
+          {formatDate(getValue() as string)}
+        </span>
+      );
     },
   },
 ];
