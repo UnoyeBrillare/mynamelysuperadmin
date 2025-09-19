@@ -1,18 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "./data-table";
-import { Trash2 } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import type { AdminUser } from "@/types/auth-type";
 
 const adminColumns: ColumnDef<AdminUser>[] = [
@@ -35,46 +22,6 @@ const adminColumns: ColumnDef<AdminUser>[] = [
         {getValue() as string}
       </span>
     ),
-  },
-  {
-    accessorKey: "id",
-    header: "",
-    cell: ({ getValue }) => {
-      const id = getValue() as number;
-      const [open, setOpen] = useState(false);
-
-      const handleDelete = () => {
-        console.log(`Deleting product with ID: ${id}`);
-        setOpen(false);
-      };
-
-      return (
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button variant="ghost" size="icon" className="cursor-pointer">
-              <Trash2 className="w-5 text-red-600 hover:text-red-800" />
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Confirm Deletion</DialogTitle>
-              <DialogDescription>
-                Are you sure you want to delete the product with ID {id}? This
-                action cannot be undone.
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setOpen(false)}>
-                Cancel
-              </Button>
-              <Button variant="destructive" onClick={handleDelete}>
-                Delete
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      );
-    },
   },
 ];
 
@@ -99,12 +46,6 @@ export function AdminTable({
   pageSize,
   onPageChange,
 }: AdminTableProps) {
-  const navigate = useNavigate();
-  const handleRowClick = (row: any) => {
-    console.log("ROW", row);
-    navigate(`/admin-settings/${row.id}`);
-  };
-
   return (
     <DataTable
       data={data}
@@ -112,7 +53,6 @@ export function AdminTable({
       title="Admin"
       description="Manage admin roles and permissions"
       pageSize={pageSize}
-      onRowClick={handleRowClick}
       showPagination={true}
       currentPage={currentPage}
       totalPages={totalPages}
