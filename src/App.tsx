@@ -9,7 +9,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <div>
         <RouterProvider router={router} />
-        <Toaster />
+        <Toaster richColors theme="system" toastOptions={{}} />
       </div>
     </QueryClientProvider>
   );
