@@ -231,9 +231,6 @@ export default function AdminForm({
                       {PERMISSION_GROUPS.map((group) => (
                         <div key={group.name}>
                           {group.permissions.map((permission) => {
-                            const isChecked = watchedPermissions.includes(
-                              permission.id
-                            );
                             const actions = getPermissionActions(permission.id);
 
                             return (
