@@ -76,10 +76,23 @@ const userColumns: ColumnDef<User>[] = [
     ),
   },
   {
-    accessorKey: "subscriptionExpiration",
+    accessorKey: "plan",
     header: "Sub Status",
-    cell: ({ getValue }) => {
-      const isExpired = getValue() as boolean;
+    cell: ({ row }) => {
+      const { subscriptionExpiration, plan } = row.original;
+
+      // If plan is free, return "Free" status
+      if (plan === "free" || plan === "free") {
+        return (
+          <span className="inline-flex px-2 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-800">
+            Free
+          </span>
+        );
+      }
+
+      const isExpired = subscriptionExpiration
+        ? new Date(subscriptionExpiration) < new Date()
+        : false;
 
       return (
         <span
