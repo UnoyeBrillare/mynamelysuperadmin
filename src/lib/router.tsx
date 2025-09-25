@@ -11,6 +11,7 @@ import { createBrowserRouter } from "react-router-dom";
 import AdminDetailsPage from "@/pages/admin-details";
 import UserDetailsPage from "@/pages/user-details";
 import AddAdminPage from "@/pages/add-amdin";
+import ForgotPasswordPage from "@/pages/auth/forgot-password";
 
 export const router = createBrowserRouter([
   {
@@ -44,6 +45,10 @@ export const router = createBrowserRouter([
           {
             path: "/login",
             element: <LoginPage />,
+          },
+          {
+            path: "/forgot-password",
+            element: <ForgotPasswordPage />,
           },
         ],
       },

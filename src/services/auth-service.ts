@@ -92,4 +92,22 @@ export const authApi = {
       throw new Error("An unexpected error occurred");
     }
   },
+
+  // Resend OTP
+  resendOTP: async (cred: any) => {
+    try {
+      const response = await apiClient.post(`/admin/resend-OTP`, cred);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const apiError: ApiError = {
+          message: error.response?.data?.message || "Forgot password failed",
+          errors: error.response?.data?.errors,
+          status: error.response?.status || 500,
+        };
+        throw apiError;
+      }
+      throw new Error("An unexpected error occurred");
+    }
+  },
 };

@@ -18,6 +18,7 @@ import { authApi } from "@/services/auth-service";
 import useAuthStore from "@/store/auth-store";
 import { toast } from "sonner";
 import { loginSchema } from "@/schemas/auth-schema";
+import { Link } from "react-router-dom";
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
@@ -121,6 +122,12 @@ export default function LoginPage() {
               )}
             />
           </div>
+          <Link
+            to={"/forgot-password"}
+            className="flex justify-end my-4 font-semibold text-primary hover:underline"
+          >
+            Forgot Password
+          </Link>
 
           <Button
             type="submit"
